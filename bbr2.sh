@@ -163,13 +163,15 @@ disable_ecn() {
     sysctl -p
 }
 remove_other_kernels() {
-    echo 'Abort kernel removal? Choose <No>'
-    echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
-    echo 'Abort kernel removal? Choose <No>'
-    echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
-    echo 'Abort kernel removal? Choose <No>'
-    echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
-    sleep 5s
+    if [[ "$environment_kernel" != "true" ]]; then
+        echo 'Abort kernel removal? Choose <No>'
+        echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
+        echo 'Abort kernel removal? Choose <No>'
+        echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
+        echo 'Abort kernel removal? Choose <No>'
+        echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
+        sleep 5s
+    fi
     apt-get purge -y $linux_images
     update-grub
 }

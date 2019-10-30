@@ -81,7 +81,7 @@ check_environment() {
     dpkg -l | grep linux-image | awk '{print $2}' | grep -q "linux-image-5.2.0-rc3+" && [ $? -eq 0 ] && environment_image="true"
     uname -r | grep -q "5.2.0-rc3+" && [ $? -eq 0 ] && environment_kernel="true"
     cat /etc/sysctl.conf | grep -q "bbr2" && [ $? -eq 0 ] && lsmod | grep -q "tcp_bbr2" && [ $? -eq 0 ] && environment_bbr2="true"
-    cat /etc/sysctl.conf | grep -q "net.ipv4.tcp_ecn" && [ $? -eq 0 ] && [[ $(cat /sys/module/tcp_bbr2/parameters/ecn_enable) -eq "Y" ]] && environment_ecn="true"
+    cat /etc/sysctl.conf | grep -q "net.ipv4.tcp_ecn" && [ $? -eq 0 ] && [[ "$(cat /sys/module/tcp_bbr2/parameters/ecn_enable)" = "Y" ]] && cat /etc/rc.local | grep -q "echo 1 > /sys/module/tcp_bbr2/parameters/ecn_enable" && [ $? -eq 0 ] && environment_ecn="true"
     linux_images=$(dpkg -l | grep linux-image | awk '{print $2}') && linux_images=${linux_images/"linux-image-5.2.0-rc3+"/} && [ ! -z "$linux_images" ] && environment_otherkernels="true"
 
     [[ "$environment_debian" != "true" ]] && echo "Error! Your OS is not Debian! This script is only suitable for Debian 9/10." && echo "錯誤！你的系統不是Debian，此腳本只適用於Debian 9/10！" && exitone="true"
@@ -156,11 +156,14 @@ enable_ecn() {
     echo "net.ipv4.tcp_ecn=1" >> /etc/sysctl.conf
     echo 1 > /sys/module/tcp_bbr2/parameters/ecn_enable
     sysctl -p
+    sed -i "/\/sys\/module\/tcp_bbr2\/parameters\/ecn_enable/d" /etc/rc.local
+    add_to_rc.local "echo 1 > /sys/module/tcp_bbr2/parameters/ecn_enable"
 }
 disable_ecn() {
     sed -i "/net.ipv4.tcp_ecn/d" /etc/sysctl.conf
     echo 0 > /sys/module/tcp_bbr2/parameters/ecn_enable
     sysctl -p
+    sed -i "/\/sys\/module\/tcp_bbr2\/parameters\/ecn_enable/d" /etc/rc.local
 }
 remove_other_kernels() {
     if [[ "$environment_kernel" != "true" ]]; then
@@ -288,7 +291,7 @@ do
 echo "+----------------------------------+" &&
 echo "|               夜桜               |" &&
 echo "|   BBR2 一鍵安裝 for Debian x64   |" &&
-echo "|         2019-10-26 Alpha         |" &&
+echo "|         2019-10-30 Alpha         |" &&
 echo "+----------------------------------+"
 
 check_environment

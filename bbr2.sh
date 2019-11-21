@@ -82,7 +82,8 @@ check_environment() {
     uname -r | grep -q "5.4.0-rc6" && [ $? -eq 0 ] && environment_kernel="true"
     cat /etc/sysctl.conf | grep -q "bbr2" && [ $? -eq 0 ] && lsmod | grep -q "tcp_bbr2" && [ $? -eq 0 ] && environment_bbr2="true"
     cat /etc/sysctl.conf | grep -q "net.ipv4.tcp_ecn" && [ $? -eq 0 ] && [[ "$(cat /sys/module/tcp_bbr2/parameters/ecn_enable)" = "Y" ]] && cat /etc/rc.local | grep -q "echo 1 > /sys/module/tcp_bbr2/parameters/ecn_enable" && [ $? -eq 0 ] && environment_ecn="true"
-    linux_images=$(dpkg -l | grep linux-image | awk '{print $2}') && linux_images=${linux_images/"linux-image-5.4.0-rc6"/} && [ ! -z "$linux_images" ] && environment_otherkernels="true"
+    other_linux_images=$(dpkg -l | grep linux-image | awk '{print $2}') && other_linux_images=${other_linux_images/"linux-image-5.4.0-rc6"/} && [ ! -z "$other_linux_images" ] && environment_otherkernels="true"
+    other_linux_headers=$(dpkg -l | grep linux-headers | awk '{print $2}') && other_linux_headers=${other_linux_headers/"linux-headers-5.4.0-rc6"/} && [ ! -z "$other_linux_headers" ] && environment_otherkernels="true"
 
     [[ "$environment_debian" != "true" ]] && echo "Error! Your OS is not Debian! This script is only suitable for Debian 9/10." && echo "錯誤！你的系統不是Debian，此腳本只適用於Debian 9/10！" && exitone="true"
     [[ "$environment_x64" != "true" ]] && echo "Error! Your OS is not x86_64! This script is only suitable for x86_64 OS." && echo "錯誤！你的系統不是64位系統，此腳本只適用於64位系統(x86_64)！" && exitone="true"
@@ -176,7 +177,7 @@ remove_other_kernels() {
         echo '當出現"Abort kernel removal?"選項時，請選擇 <No>'
         sleep 5s
     fi
-    apt-get purge -y $linux_images
+    apt-get purge -y $other_linux_images $other_linux_headers
     update-grub
 }
 

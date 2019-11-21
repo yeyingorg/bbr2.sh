@@ -77,12 +77,12 @@ check_environment() {
     cat /etc/issue | grep -q "Debian" && [ $? -eq 0 ] && environment_debian="true"
     cat /etc/issue | grep -q "Ubuntu" && [ $? -eq 0 ] && environment_debian="true"
     uname -a | grep -q "x86_64" && [ $? -eq 0 ] && environment_x64="true"
-    dpkg -l | grep linux-headers | awk '{print $2}' | grep -q "linux-headers-5.2.0-rc3+" && [ $? -eq 0 ] && environment_headers="true"
-    dpkg -l | grep linux-image | awk '{print $2}' | grep -q "linux-image-5.2.0-rc3+" && [ $? -eq 0 ] && environment_image="true"
-    uname -r | grep -q "5.2.0-rc3+" && [ $? -eq 0 ] && environment_kernel="true"
+    dpkg -l | grep linux-headers | awk '{print $2}' | grep -q "linux-headers-5.4.0-rc6" && [ $? -eq 0 ] && environment_headers="true"
+    dpkg -l | grep linux-image | awk '{print $2}' | grep -q "linux-image-5.4.0-rc6" && [ $? -eq 0 ] && environment_image="true"
+    uname -r | grep -q "5.4.0-rc6" && [ $? -eq 0 ] && environment_kernel="true"
     cat /etc/sysctl.conf | grep -q "bbr2" && [ $? -eq 0 ] && lsmod | grep -q "tcp_bbr2" && [ $? -eq 0 ] && environment_bbr2="true"
     cat /etc/sysctl.conf | grep -q "net.ipv4.tcp_ecn" && [ $? -eq 0 ] && [[ "$(cat /sys/module/tcp_bbr2/parameters/ecn_enable)" = "Y" ]] && cat /etc/rc.local | grep -q "echo 1 > /sys/module/tcp_bbr2/parameters/ecn_enable" && [ $? -eq 0 ] && environment_ecn="true"
-    linux_images=$(dpkg -l | grep linux-image | awk '{print $2}') && linux_images=${linux_images/"linux-image-5.2.0-rc3+"/} && [ ! -z "$linux_images" ] && environment_otherkernels="true"
+    linux_images=$(dpkg -l | grep linux-image | awk '{print $2}') && linux_images=${linux_images/"linux-image-5.4.0-rc6"/} && [ ! -z "$linux_images" ] && environment_otherkernels="true"
 
     [[ "$environment_debian" != "true" ]] && echo "Error! Your OS is not Debian! This script is only suitable for Debian 9/10." && echo "錯誤！你的系統不是Debian，此腳本只適用於Debian 9/10！" && exitone="true"
     [[ "$environment_x64" != "true" ]] && echo "Error! Your OS is not x86_64! This script is only suitable for x86_64 OS." && echo "錯誤！你的系統不是64位系統，此腳本只適用於64位系統(x86_64)！" && exitone="true"
@@ -116,16 +116,16 @@ analyze_environment() {
 
 install_kernel() {
     if [[ "$environment_headers" != "true" ]]; then
-        [ ! -f "linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb" ] && wget --no-check-certificate -O linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb "https://github.com/yeyingorg/bbr2.sh/raw/master/linux-headers-5.2.0-rc3%2B_5.2.0-rc3%2B-1_amd64.deb"
-        [ ! -f "linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb" ] && echo "Error! Download file failed! File \"linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb\" Not Found!" && echo "錯誤！下載文件失敗！找不到文件 \"linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb\"" && exit 1
+        [ ! -f "linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb" ] && wget --no-check-certificate -O linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb "https://github.com/yeyingorg/bbr2.sh/raw/master/linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb"
+        [ ! -f "linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb" ] && echo "Error! Download file failed! File \"linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb\" Not Found!" && echo "錯誤！下載文件失敗！找不到文件 \"linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb\"" && exit 1
     fi
     if [[ "$environment_image" != "true" ]]; then
-        [ ! -f "linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb" ] && wget --no-check-certificate -O linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb "https://github.com/yeyingorg/bbr2.sh/raw/master/linux-image-5.2.0-rc3%2B_5.2.0-rc3%2B-1_amd64.deb"
-        [ ! -f "linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb" ] && echo "Error! Download file failed! File \"linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb\" Not Found!" && echo "錯誤！下載文件失敗！找不到文件 \"linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb\"" && exit 1
+        [ ! -f "linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb" ] && wget --no-check-certificate -O linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb "https://github.com/yeyingorg/bbr2.sh/raw/master/linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb"
+        [ ! -f "linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb" ] && echo "Error! Download file failed! File \"linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb\" Not Found!" && echo "錯誤！下載文件失敗！找不到文件 \"linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb\"" && exit 1
     fi
-    [[ "$environment_headers" != "true" ]] && dpkg -i linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb
-    [[ "$environment_image" != "true" ]] && dpkg -i linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb
-    rm -f linux-headers-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb linux-image-5.2.0-rc3+_5.2.0-rc3+-1_amd64.deb
+    [[ "$environment_headers" != "true" ]] && dpkg -i linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb
+    [[ "$environment_image" != "true" ]] && dpkg -i linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb
+    rm -f linux-headers-5.4.0-rc6_5.4.0-rc6-2_amd64.deb linux-image-5.4.0-rc6_5.4.0-rc6-2_amd64.deb
     update-grub
 }
 enable_bbr2() {
@@ -150,6 +150,7 @@ disable_bbr2() {
     sed -i "/net.ipv4.tcp_ecn/d" /etc/sysctl.conf
     echo 0 > /sys/module/tcp_bbr2/parameters/ecn_enable
     sysctl -p
+    sed -i "/\/sys\/module\/tcp_bbr2\/parameters\/ecn_enable/d" /etc/rc.local
 }
 enable_ecn() {
     sed -i "/net.ipv4.tcp_ecn/d" /etc/sysctl.conf
@@ -291,7 +292,7 @@ do
 echo "+----------------------------------+" &&
 echo "|               夜桜               |" &&
 echo "|   BBR2 一鍵安裝 for Debian x64   |" &&
-echo "|         2019-10-30 Alpha         |" &&
+echo "|        2019-11-21 Alpha-2        |" &&
 echo "+----------------------------------+"
 
 check_environment

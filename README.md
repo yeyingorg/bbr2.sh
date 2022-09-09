@@ -1,5 +1,8 @@
 # bbr2.sh
 
+Deprecated  
+已弃用！请勿使用！  
+
 Warning: Replacing the kernel is risky and will not be responsible for any loss caused by the use of this script.  
 警告：更换内核有风险，若使用本脚本后无法开机造成损失，概不负责。
 
